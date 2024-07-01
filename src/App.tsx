@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from "react";
 import "./App.css"
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-
-gsap.registerPlugin(useGSAP);
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 function App() {
-	const [card, setCard] = useState<string[]>(["1", "2", "3", "4", "5"]);
-  const cardRef = useRef<HTMLDivElement[]>([]);
+	const [card, setCard] = useState<string[]>(["1", "2", "3"]);
+	const cardRef = useRef<HTMLDivElement[]>([]);
 
 	useEffect(() => {
 		cardRef.current = cardRef.current.slice(0, card.length);
@@ -48,12 +48,35 @@ function App() {
 		}
 	};
 
+	useGSAP(() => {
+		cardRef.current.forEach((card, index) => {
+			gsap.timeline({
+				scrollTrigger: {
+					trigger: ".card--container",
+					start: `top+=${index * 200} top`,
+					end: `top+=${(index + 1) * 100} top`,
+					scrub: 5,
+					markers: true,
+				},
+			})
+				.fromTo(card, { x: 0 }, { x: 200, duration: 2 })
+				.to(card, { x: 0, duration: 2 });
+		});
 
-	
-	
+		gsap.to(".card--container", {
+			scrollTrigger: {
+				trigger: ".card--container",
+				start: "top top",
+				end: `+=${cardRef.current.length * 300}`,
+				pin: true,
+				markers: true,
+			},
+		});
+	});
+
 	return (
-		<div>
-			<div className="container">
+		<div className="main--container">
+			<div className="container card--container">
 				{card?.map((ele, index) => (
 					<div
 						ref={(element: HTMLDivElement) =>
@@ -73,6 +96,13 @@ function App() {
 				))}
 			</div>
 			<button onClick={handlePlus}>+</button>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
+			<div className="container">helo word</div>
 		</div>
 	);
 }
